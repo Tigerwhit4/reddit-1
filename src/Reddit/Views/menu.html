@@ -1,0 +1,20 @@
+<ul class='nav navbar-nav'>
+    <li {% if subreddit is not defined %}class='active'{% endif %}> <a href="{{ to('/') }}">Front</a></li>
+    {% for sub in subreddits %}
+        <li {% if subreddit is defined and subreddit.url == sub.url %}class='active'{% endif %}><a href="{{ to(sub.url) }}">{{ sub.name }}</a></li>
+    {% endfor %}
+</ul>
+<ul class='nav navbar-nav navbar-right'>
+    {% if isAuthenticated() %}
+        <li><a href="{{ to('/me/messages') }}">{{ getUser().username }}
+            {% set unreadMessages = getUnreadMessages(getUser()) %}
+            {% if unreadMessages != 0 %}
+            ({{ unreadMessages }})
+            {% endif %}
+        </a></li>
+        <li><a href="{{ to('/api/logout') }}">Logout</a></li>
+    {% else %}
+        <li><a data-toggle="modal" href="#login">Login</a></li>
+        <li><a data-toggle="modal" href="#register">Register</a></li>
+    {% endif %}
+</ul>

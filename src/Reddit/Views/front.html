@@ -1,0 +1,7 @@
+{% extends '@Reddit/layout.html' %}
+
+{% block content %}
+    {% for topic in topics %}
+        {{ include('@Reddit/topic.html') }}
+    {% endfor %}
+{% endblock %}

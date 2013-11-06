@@ -1,0 +1,59 @@
+{% extends '@Reddit/layout.html' %}
+
+{% block title %}
+{{ user.username }}
+{% endblock %}
+
+{% block h1 %}
+{{ user.username }}
+{% endblock %}
+
+{% block content %}
+    {% if isAuthenticated() and getUser().id != user.id %}
+        <p class='post'>
+            <a data-toggle="modal" href="#newMessage" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-pencil"></span> New personal message</a>
+        </p>
+
+        {{ include('@Reddit/modals/newmessage.html') }}
+    {% endif %}
+    
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a data-toggle="tab" href="#topics">Topics</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#comments">Comments</a>
+        </li>
+    </ul>
+    <div class="tab-content user-tabs">
+        <div id="topics" class="tab-pane fade active in">
+            <ul class="list-group">
+                {% for topic in user.topics %}
+                <li class="list-group-item">
+                    <span class="badge vote_{{ topic.id }}">{{ topic.calculateTopicStatus() }}</span>
+                    <a href='{{ to(topic.subreddit.url ~'/'~ title(topic.title) ~'/'~ topic.id) }}'>
+                       {{ topic.title }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div id="comments" class="tab-pane fade">
+            {% for comment in user.comments %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href='{{ to(topic.subreddit.url ~'/'~ title(topic.title) ~'/'~ topic.id) }}'>
+                       {{ comment.topic.title }}
+                    </a>
+                    <span class="badge vote_{{ comment.topic.id }}">{{ comment.topic.calculateTopicStatus() }}</span>
+                </div>
+
+                <div class="panel-body">
+                    <span class="badge vote_{{ comment.id }}">{{ comment.calculateCommentStatus() }}</span>
+                    {{ comment.text }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

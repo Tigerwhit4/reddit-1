@@ -1,0 +1,19 @@
+{% if app.request.session.has('errors') %}
+    <div class="alert alert-dismissable alert-warning">
+        <button class="close" data-dismiss="alert" type="button">&times;</button>
+        <h4>Warning!</h4>
+        {% for error in app.request.session.flash('errors') %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if app.request.session.has('alerts') %}
+    <div class="alert alert-dismissable alert-success">
+        <button class="close" data-dismiss="alert" type="button">&times;</button>
+        <h4>Success!</h4>
+        {% for alert in app.request.session.flash('alerts') %}
+            <p>{{ alert }}</p>
+        {% endfor %}
+    </div>
+{% endif %}

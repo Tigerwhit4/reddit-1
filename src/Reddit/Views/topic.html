@@ -1,0 +1,24 @@
+<div class="panel panel-info">
+    <div class='panel-heading'>
+        <a href='{{ to(topic.subreddit.url ~'/'~ title(topic.title) ~'/'~ topic.id) }}'>{{ topic.title }}</a>
+        <span class="badge vote_{{ topic.id }}">{{ topic.calculateTopicStatus }}</span>
+        {% if isAuthenticated() %}
+            <div class='voting'>
+                {% set voteStatus = getUser().getVoteStatusByTopic(topic) %}
+                <a data-topicid='{{ topic.id }}' class='btn upvote topic_{{ topic.id }} btn-xs
+                    {% if voteStatus == 1 %}btn-success{% else %}btn-default{% endif %}
+                '>
+                    <span class='glyphicon glyphicon-thumbs-up'></span>
+                </a>
+                <a data-topicid='{{ topic.id }}' class='btn downvote topic_{{ topic.id }} btn-xs
+                    {% if voteStatus == -1 %}btn-primary{% else %}btn-default{% endif %}
+                '>
+                    <span class='glyphicon glyphicon-thumbs-down'></span>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+    <div class='panel-body'>
+        <p>Posted {{ diff(topic.createdAt) }} by <a href='{{ to('/user/'~ topic.user.username) }}'>{{ topic.user.username }}</a></p>
+    </div>
+</div>

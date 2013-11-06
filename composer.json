@@ -1,0 +1,8 @@
+{
+    "require": {
+        "twig/twig": "1.14.*@dev",
+        "ircmaxell/password-compat": "dev-master",
+        "sarracenia/sarracenia": "dev-master",
+        "sarracenia/dionaea": "dev-master"
+    }
+}

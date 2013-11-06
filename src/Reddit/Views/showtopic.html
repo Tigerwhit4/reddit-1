@@ -1,0 +1,43 @@
+{% extends '@Reddit/layout.html' %}
+
+{% import '@Reddit/macro/showcomments.html' as macro %}
+
+{% block title %}
+{{ topic.title }}
+{% endblock %}
+
+{% block h1 %}
+{{ topic.title }} <span class="badge vote_{{ topic.id }}">{{ topic.calculateTopicStatus }}</span>
+{% endblock %}
+
+{% block content %}
+    {% if isAuthenticated() %}
+    <div class='topicvote'>
+        {% set voteTopicStatus = getUser().getVoteStatusByTopic(topic) %}
+        <a data-topicid='{{ topic.id }}' class='btn upvote topic_{{ topic.id }} btn-xs
+            {% if voteTopicStatus == 1 %}btn-success{% else %}btn-default{% endif %}
+        '>
+            <span class='glyphicon glyphicon-thumbs-up'></span>
+        </a>
+        <a data-topicid='{{ topic.id }}' class='btn downvote topic_{{ topic.id }} btn-xs
+            {% if voteTopicStatus == -1 %}btn-primary{% else %}btn-default{% endif %}
+        '>
+            <span class='glyphicon glyphicon-thumbs-down'></span>
+        </a>
+    </div>
+    {% endif %}
+    <div class='well'>
+        {{ topic.text }}
+    </div>
+    <pre>Posted {{ diff(topic.createdAt) }} by <a href='{{ to('/user/'~ topic.user.username) }}'>{{ topic.user.username }}</a></pre>
+    <hr>
+
+    {% if isAuthenticated() %}
+        <p class='post'>
+            <a data-toggle="modal" href="#newComment" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-pencil"></span> New comment</a>
+        </p>
+        {{ include('@Reddit/modals/newcomment.html') }}
+    {% endif %}
+
+    {{ macro.showComments(topic, sortComments(topic.comments, -1), 100) }}
+{% endblock %}

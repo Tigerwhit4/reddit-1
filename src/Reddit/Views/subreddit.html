@@ -1,0 +1,19 @@
+{% extends '@Reddit/layout.html' %}
+
+{% block title %}
+{{ subreddit.name }}
+{% endblock %}
+
+{% block h1 %}
+{{ subreddit.name }}
+{% endblock %}
+
+{% block content %}
+    {% if isAuthenticated() %}
+        {{ include('@Reddit/modals/newpost.html') }}
+    {% endif %}
+
+    {% for topic in subreddit.topics %}
+        {{ include('@Reddit/topic.html') }}
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,33 @@
+{% macro showComments(topic, comments, indent) %}
+    {% import '@Reddit/macro/showcomments.html' as recursive %}
+
+    {% for comment in comments %}
+        <div class="panel panel-default indent-{{ indent }}">
+            <div class='panel-body'>
+                {{ comment.text }}
+            </div>
+            <div class='panel-footer'>
+                <span class="badge commentvote_{{ comment.id }}">{{ comment.calculateCommentStatus }}</span>
+                Posted {{ diff(topic.createdAt) }} by <a href='{{ to('/user/'~ comment.user.username) }}'>{{ comment.user.username }}</a>
+
+                {% if isAuthenticated() %}
+                <div class='voting'>
+                    {% set voteStatus = getUser().getVoteStatusByComment(comment) %}
+                    <a data-commentid='{{ comment.id }}' class='btn upvotecomment comment_{{ comment.id }} btn-xs
+                        {% if voteStatus == 1 %}btn-success{% else %}btn-default{% endif %}
+                    '>
+                        <span class='glyphicon glyphicon-thumbs-up'></span>
+                    </a>
+                    <a data-commentid='{{ comment.id }}' class='btn downvotecomment comment_{{ comment.id }} btn-xs
+                        {% if voteStatus == -1 %}btn-primary{% else %}btn-default{% endif %}
+                    '>
+                        <span class='glyphicon glyphicon-thumbs-down'></span>
+                    </a>
+                    <a data-toggle="modal" data-commentid='{{ comment.id }}' href="#newComment" class='reply btn btn-default btn-xs'><span class='glyphicon glyphicon-share-alt'></span></a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {{ recursive.showComments(topic, comment.children, indent - 5) }}
+    {% endfor %}
+{% endmacro %}

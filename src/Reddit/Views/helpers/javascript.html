@@ -1,0 +1,103 @@
+<script type='text/javascript'>
+    function changeVotes(status, changeStatus, topicid) {
+        status = parseInt(status);
+        changeStatus = parseInt(changeStatus);
+        topicid = parseInt(topicid);
+        if (status == -1) {
+            $('.downvote.topic_'+ topicid).removeClass('btn-default').addClass('btn-primary');
+        }
+        if (status == 0) {
+            $('.downvote.topic_'+ topicid).removeClass('btn-primary').addClass('btn-default');
+            $('.upvote.topic_'+ topicid).removeClass('btn-success').addClass('btn-default');
+        }
+        if (status == 1) {
+            $('.upvote.topic_'+ topicid).removeClass('btn-default').addClass('btn-success');
+        }
+        var currentStatus = parseInt($('.vote_'+ topicid).text()) + changeStatus;
+        $('.vote_'+ topicid).html(currentStatus);
+    }
+        
+    function changeCommentVotes(status, changeStatus, commentid) {
+        status = parseInt(status);
+        changeStatus = parseInt(changeStatus);
+        if (status == -1) {
+            $('.downvotecomment.comment_'+ commentid).removeClass('btn-default').addClass('btn-primary');
+        }
+        if (status == 0) {
+            $('.downvotecomment.comment_'+ commentid).removeClass('btn-primary').addClass('btn-default');
+            $('.upvotecomment.comment_'+ commentid).removeClass('btn-success').addClass('btn-default');
+        }
+        if (status == 1) {
+            $('.upvotecomment.comment_'+ commentid).removeClass('btn-default').addClass('btn-success');
+        }
+        var currentStatus = parseInt($('.commentvote_'+ commentid).text()) + changeStatus;
+        $('.commentvote_'+ commentid).html(currentStatus);
+    }
+
+    $(document).ready(function() {
+        $('.upvote').each(function() {
+            $(this).click(function() {
+                var topicid = $(this).data('topicid');
+                $.ajax({
+                    type: 'post',
+                    url: '{{ to('/api/votetopic') }}',
+                    data: {topicid: topicid, status: 1},
+                    dataType: 'json'
+                })
+                .success(function(data) {
+                    changeVotes(data.status, data.changeStatus, topicid);
+                });
+            });
+        });
+        $('.downvote').each(function() {
+            $(this).click(function() {
+                var topicid = $(this).data('topicid');
+                $.ajax({
+                    type: 'post',
+                    url: '{{ to('/api/votetopic') }}',
+                    data: {topicid: topicid, status: -1},
+                    dataType: 'json'
+                })
+                .success(function(data) {
+                    changeVotes(data.status, data.changeStatus, topicid);
+                });
+            });
+        });
+        
+        $('.reply').each(function() {
+            $(this).click(function() {
+                var commentid = $(this).data('commentid');
+                $('#comment_id').attr('value', commentid);
+            });
+        });
+        
+        $('.upvotecomment').each(function() {
+            $(this).click(function() {
+                var commentid = $(this).data('commentid');
+                $.ajax({
+                    type: 'post',
+                    url: '{{ to('/api/votecomment') }}',
+                    data: {commentid: commentid, status: 1},
+                    dataType: 'json'
+                })
+                .success(function(data) {
+                    changeCommentVotes(data.status, data.changeStatus, commentid);
+                });
+            });
+        });
+        $('.downvotecomment').each(function() {
+            $(this).click(function() {
+                var commentid = $(this).data('commentid');
+                $.ajax({
+                    type: 'post',
+                    url: '{{ to('/api/votecomment') }}',
+                    data: {commentid: commentid, status: -1},
+                    dataType: 'json'
+                })
+                .success(function(data) {
+                    changeCommentVotes(data.status, data.changeStatus, commentid);
+                });
+            });
+        });
+    });
+</script>

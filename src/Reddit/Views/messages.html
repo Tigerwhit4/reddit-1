@@ -1,0 +1,64 @@
+{% extends '@Reddit/layout.html' %}
+
+{% block title %}
+My messages
+{% endblock %}
+
+{% block h1 %}
+My messages
+{% endblock %}
+
+{% block content %}
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a data-toggle="tab" href="#comments">Comments</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#messages">Personal messages</a>
+        </li>
+    </ul>
+    <div class="tab-content user-tabs">
+        <div id="comments" class="tab-pane fade active in">
+            {% for comment in comments %}
+                {% if comment.hasRead == 0 %}
+                    <div class="panel panel-primary">
+                {% else %}
+                    <div class="panel panel-default">
+                {% endif %}
+                <div class="panel-heading">
+                    <span class="badge vote_{{ comment.topic.id }}">{{ comment.topic.calculateTopicStatus() }}</span>
+                    <a href='{{ to(comment.topic.subreddit.url ~'/'~ title(comment.topic.title) ~'/'~ comment.topic.id) }}'>
+                       {{ comment.topic.title }}
+                    </a>
+                </div>
+                <div class="panel-body">{{ comment.text }}</div>
+                <div class="panel-footer">
+                    Posted {{ diff(comment.createdAt) }} by <a href='{{ to('/user/'~ comment.user.username) }}'>{{ comment.user.username }}</a>
+                </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div id="messages" class="tab-pane fade">
+            {% for message in getUser().messages %}
+                {% if message.hasRead == 0 %}
+                    <div class="panel panel-primary">
+                {% else %}
+                    <div class="panel panel-default">
+                {% endif %}
+                <div class="panel-heading">
+                       {{ message.title }}
+                </div>
+                <div class="panel-body">{{ message.text }}</div>
+                <div class="panel-footer">
+                    Posted {{ diff(message.createdAt) }} by <a href='{{ to('/user/'~ message.from.username) }}'>{{ message.from.username }}</a>
+                </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {{ include('@Reddit/modals/newmessage.html') }}
+
+        {{ changeToRead(comments, getUser().messages) }}
+
+    </div>
+{% endblock %}
